@@ -6,7 +6,7 @@ app.use(express.json());
 const users = [];
 
 app.get('/', (req, res) => {
-    res.send('<h1>API está rodando! Use /usuarios para listar os usuários.</h1>');
+    res.send('API está rodando! Use /usuarios para listar os usuários.');
 });
 
 app.post('/usuarios', (req, res) => {
