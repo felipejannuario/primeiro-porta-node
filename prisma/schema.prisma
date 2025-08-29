@@ -15,8 +15,8 @@ datasource db {
 }
 
 model User {
-  id      String   @id @default(auto()) @map("_id") @db.ObjectId
-  email   String   @unique
-  name    String?
-  age     Int
+  id    String  @id @default(uuid()) // ou Int @id @default(autoincrement())
+  email String  @unique
+  name  String?
+  age   Int
 }
