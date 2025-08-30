@@ -9,6 +9,7 @@ const users = [];
 
 app.get('/usuarios', (req, res) => {
     res.send('API está rodando! Use /usuarios para listar os usuários.');
+    res.json(users);
 });
 
 app.post('/usuarios', (req, res) => {
