@@ -8,8 +8,11 @@ app.use(cors());  //aqui habilito o http://localhost:3000 ou o servidor que for 
 const users = [];
 
 app.get('/usuarios', (req, res) => {
-    res.send('API está rodando! Use /usuarios para listar os usuários.');
-    res.json(users);
+   res.json({
+        message: 'API está rodando! Aqui está a lista de usuários:',
+        
+        users: users
+    });
 });
 
 app.post('/usuarios', (req, res) => {
