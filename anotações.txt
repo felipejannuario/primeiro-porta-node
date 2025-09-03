@@ -1,0 +1,241 @@
+Beleza, Felipe. Vamos organizar isso de forma clara pra você deixar no seu `anotações.txt`. Vou te mostrar passo a passo como usar as rotas do seu backend com Node.js, Express e Prisma, incluindo exemplos de GET, POST, PUT e DELETE. 👊
+
+---
+
+# **Anotações do Backend - Node.js + Express + Prisma**
+
+## **1. Estrutura básica do servidor**
+
+```js
+import express from "express";
+import cors from "cors";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
+const app = express();
+
+app.use(express.json()); // Para interpretar JSON no body das requisições
+app.use(cors()); // Permite que o front acesse a API
+
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
+```
+
+---
+
+## **2. Rotas principais**
+
+### **2.1 GET - Listar todos os usuários**
+
+```js
+app.get("/usuarios", async (req, res) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar usuários" });
+  }
+});
+```
+
+* **Como usar:**
+
+  * Endpoint: `GET http://localhost:3000/usuarios`
+  * Retorna todos os usuários do banco.
+
+---
+
+### **2.2 GET - Buscar usuário por ID**
+
+```js
+app.get("/usuarios/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const user = await prisma.user.findUnique({ where: { id: Number(id) } });
+    if (!user) return res.status(404).json({ error: "Usuário não encontrado" });
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar usuário" });
+  }
+});
+```
+
+* **Como usar:**
+
+  * Endpoint: `GET http://localhost:3000/usuarios/1`
+  * Retorna o usuário com o ID específico.
+
+---
+
+### **2.3 POST - Criar novo usuário**
+
+```js
+app.post("/usuarios", async (req, res) => {
+  const { nome, email } = req.body;
+  try {
+    const novoUser = await prisma.user.create({ data: { nome, email } });
+    res.status(201).json(novoUser);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao criar usuário" });
+  }
+});
+```
+
+* **Como usar:**
+
+  * Endpoint: `POST http://localhost:3000/usuarios`
+  * Body (JSON):
+
+    ```json
+    {
+      "nome": "Felipe",
+      "email": "felipe@email.com"
+    }
+    ```
+
+---
+
+### **2.4 PUT - Atualizar usuário**
+
+```js
+app.put("/usuarios/:id", async (req, res) => {
+  const { id } = req.params;
+  const { nome, email } = req.body;
+  try {
+    const userAtualizado = await prisma.user.update({
+      where: { id: Number(id) },
+      data: { nome, email }
+    });
+    res.json(userAtualizado);
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao atualizar usuário" });
+  }
+});
+```
+
+* **Como usar:**
+
+  * Endpoint: `PUT http://localhost:3000/usuarios/1`
+  * Body (JSON):
+
+    ```json
+    {
+      "nome": "Felipe Atualizado",
+      "email": "novoemail@email.com"
+    }
+    ```
+
+---
+
+### **2.5 DELETE - Deletar usuário**
+
+```js
+app.delete("/usuarios/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await prisma.user.delete({ where: { id: Number(id) } });
+    res.json({ mensagem: "Usuário deletado com sucesso" });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao deletar usuário" });
+  }
+});
+```
+
+* **Como usar:**
+
+  * Endpoint: `DELETE http://localhost:3000/usuarios/1`
+  * Remove o usuário do banco de dados.
+
+---
+
+## **3. Testando a API**
+
+* Pode usar o **Thunder Client** ou **Postman**.
+* Para o frontend (React/Angular/Vanilla JS), use `axios` ou `fetch` para fazer requisições para `http://localhost:3000/usuarios`.
+
+---
+
+Se quiser, posso te montar uma **versão enxuta em estilo cheatsheet** só com os exemplos de requisição e o que cada rota faz, perfeita pra colar no seu `anotações.txt`. Isso deixaria bem mais rápido de consultar.
+
+Quer que eu faça essa versão?
+
+
+Beleza, Felipe! Aqui vai o **cheatsheet enxuto do seu backend**, pronto pra colar no `anotações.txt`. Tudo direto ao ponto, estilo “olha o código e sabe o que faz”. 👊
+
+---
+
+# **Cheatsheet Backend Node + Express + Prisma**
+
+### **1. Listar todos os usuários**
+
+```
+GET /usuarios
+Retorna todos os usuários
+Ex.: GET http://localhost:3000/usuarios
+```
+
+### **2. Buscar usuário por ID**
+
+```
+GET /usuarios/:id
+Retorna usuário específico
+Ex.: GET http://localhost:3000/usuarios/1
+```
+
+### **3. Criar novo usuário**
+
+```
+POST /usuarios
+Cria usuário novo
+Body JSON:
+{
+  "nome": "Felipe",
+  "email": "felipe@email.com"
+}
+```
+
+### **4. Atualizar usuário**
+
+```
+PUT /usuarios/:id
+Atualiza usuário existente
+Body JSON:
+{
+  "nome": "Felipe Atualizado",
+  "email": "novoemail@email.com"
+}
+Ex.: PUT http://localhost:3000/usuarios/1
+```
+
+### **5. Deletar usuário**
+
+```
+DELETE /usuarios/:id
+Remove usuário do banco
+Ex.: DELETE http://localhost:3000/usuarios/1
+```
+
+### **6. Testando a API**
+
+* Use **Thunder Client** ou **Postman**.
+* Para front-end (React/JS):
+
+```js
+import axios from "axios";
+const api = axios.create({ baseURL: "http://localhost:3000" });
+const users = await api.get("/usuarios");
+```
+
+### **7. Mensagens úteis**
+
+* **500:** Erro interno do servidor (algo deu ruim no backend)
+* **404:** Usuário não encontrado
+* **201:** Criado com sucesso (POST)
+
+---
+
+Se quiser, posso te fazer uma **versão ainda mais visual**, tipo tabela ou checklist, que você consegue ver de relance o que cada rota faz e qual método usar — fica top pro `anotações.txt`.
+
+Quer que eu faça essa versão também?
