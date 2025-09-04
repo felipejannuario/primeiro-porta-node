@@ -20,3 +20,10 @@ model User {
   age      Int
   password String?   // agora opcional
 }
+
+model Admin {
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  password String
+}
+
