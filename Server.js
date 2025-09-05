@@ -2,6 +2,10 @@ import express from "express";
 import cors from "cors";
 import { PrismaClient } from "@prisma/client";
 import usersRoutes from "./routes/users.js";
+import { config } from "dotenv";
+import adminRoutes from "./routes/admin.js";
+
+config(); // Carrega .env
 
 const prisma = new PrismaClient();
 const app = express();
@@ -9,6 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use("/usuarios", usersRoutes);
+app.use("/admin", adminRoutes);
 
 // Buscar todos os usuários
 app.get("/usuarios", async (req, res) => {

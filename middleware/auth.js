@@ -1,19 +1,17 @@
-// middleware/auth.js
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET;
+export default function authMiddleware(req, res, next) {
+  const authHeader = req.headers.authorization;
 
-export function authenticateToken(req, res, next) {
-  const header = req.headers.authorization || "";
-  const [scheme, token] = header.split(" ");
+  if(!authHeader) return res.status(401).json({ message: "Token não enviado" });
 
-  if (scheme !== "Bearer" || !token) {
-    return res.status(401).json({ message: "Token ausente ou inválido" });
-  }
+  const token = authHeader.split(" ")[1];
 
-  jwt.verify(token, JWT_SECRET, (err, payload) => {
-    if (err) return res.status(403).json({ message: "Token expirado ou inválido" });
-    req.admin = payload; // { id, email }
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
     next();
-  });
+  } catch {
+    return res.status(401).json({ message: "Token inválido" });
+  }
 }
